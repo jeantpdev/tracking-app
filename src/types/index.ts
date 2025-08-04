@@ -26,7 +26,7 @@ export interface ProcessStage {
   historial: HistoryItem[];
   comentarios?: string;
   fecha_actualizacion?: string;
-  requisitos_pendientes?: string[];
+  requisitos_pendientes?: string[] | string;
   viabilidad?: string;
   desembolsado?: boolean;
   fecha_estimada?: string | null;
