@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Clock, FilePlus, File, Edit2 } from 'lucide-react';
-import { ProcessStage, FileItem as FileItemType } from '../types';
+import { ProcessStage, FileItem as FileItemType, StageStatus } from '../types';
 import StatusBadge from './StatusBadge';
 import FileItem from './FileItem';
 import HistoryTimeline from './HistoryTimeline';
@@ -84,7 +84,7 @@ const StageCard: React.FC<StageCardProps> = ({
               <StatusBadge status={stage.estado} />
               <span className="text-sm text-gray-500">
                 <Clock size={14} className="inline mr-1" />
-                {formatDate(stage.fecha_actualizacion)}
+                {stage.fecha_actualizacion ? formatDate(stage.fecha_actualizacion) : 'Sin fecha'}
               </span>
             </div>
           </div>
@@ -130,7 +130,7 @@ const StageCard: React.FC<StageCardProps> = ({
             </label>
             <select
               value={newState}
-              onChange={(e) => setNewState(e.target.value)}
+              onChange={(e) => setNewState(e.target.value as StageStatus)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="Pendiente">Pendiente</option>
@@ -170,23 +170,31 @@ const StageCard: React.FC<StageCardProps> = ({
       {/* Expanded content */}
       {isExpanded && (
         <div className="p-4 border-t border-gray-200 space-y-4">
+          {/* Requisitos pendientes */}
+          {stage.requisitos_pendientes && (
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 mb-1">Requisitos pendientes</h4>
+              {Array.isArray(stage.requisitos_pendientes) ? (
+                stage.requisitos_pendientes.length > 0 ? (
+                  <ul className="list-disc list-inside text-sm text-gray-600">
+                    {stage.requisitos_pendientes.map((req, idx) => (
+                      <li key={idx}>{req}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-gray-500">No hay requisitos pendientes</p>
+                )
+              ) : (
+                <p className="text-sm text-gray-600">{stage.requisitos_pendientes}</p>
+              )}
+            </div>
+          )}
+
           {/* Comentarios */}
           {stage.comentarios && (
             <div>
               <h4 className="text-sm font-medium text-gray-700 mb-1">Comentarios</h4>
               <p className="text-sm text-gray-600">{stage.comentarios}</p>
-            </div>
-          )}
-
-          {/* Requisitos pendientes */}
-          {stage.requisitos_pendientes && stage.requisitos_pendientes.length > 0 && (
-            <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-1">Requisitos pendientes</h4>
-              <ul className="list-disc list-inside text-sm text-gray-600">
-                {stage.requisitos_pendientes.map((req, idx) => (
-                  <li key={idx}>{req}</li>
-                ))}
-              </ul>
             </div>
           )}
 
